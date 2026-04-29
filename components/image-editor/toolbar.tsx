@@ -32,16 +32,38 @@ interface ToolbarProps {
   setActivePanel: (panel: "filters" | "brush" | "transform" | "history" | null) => void
 }
 
-const tools: { id: Tool; icon: typeof Paintbrush; label: string; shortcut: string }[] = [
-  { id: "hand", icon: Hand, label: "Pan / Move (scroll to pan)", shortcut: "H" },
-  { id: "brush", icon: Paintbrush, label: "Brush", shortcut: "B" },
-  { id: "eraser", icon: Eraser, label: "Eraser", shortcut: "E" },
-  { id: "smudge", icon: Droplets, label: "Smudge", shortcut: "S" },
-  { id: "blur", icon: CircleDot, label: "Blur", shortcut: "U" },
-  { id: "sharpen", icon: Sparkles, label: "Sharpen", shortcut: "P" },
-  { id: "dodge", icon: Sun, label: "Dodge (Lighten)", shortcut: "O" },
-  { id: "burn", icon: Moon, label: "Burn (Darken)", shortcut: "N" },
-  { id: "clone", icon: Copy, label: "Clone Stamp (Alt+Click to set source)", shortcut: "C" },
+type ToolItem = { id: Tool; icon: typeof Paintbrush; label: string; shortcut: string }
+
+const toolGroups: { label: string; tools: ToolItem[] }[] = [
+  {
+    label: "Navigation",
+    tools: [
+      { id: "hand", icon: Hand, label: "Pan / Move (scroll to pan)", shortcut: "H" },
+    ],
+  },
+  {
+    label: "Drawing",
+    tools: [
+      { id: "brush", icon: Paintbrush, label: "Brush", shortcut: "B" },
+      { id: "eraser", icon: Eraser, label: "Eraser", shortcut: "E" },
+      { id: "clone", icon: Copy, label: "Clone Stamp (Alt+Click to set source)", shortcut: "C" },
+    ],
+  },
+  {
+    label: "Retouching",
+    tools: [
+      { id: "smudge", icon: Droplets, label: "Smudge", shortcut: "S" },
+      { id: "blur", icon: CircleDot, label: "Blur", shortcut: "U" },
+      { id: "sharpen", icon: Sparkles, label: "Sharpen", shortcut: "P" },
+    ],
+  },
+  {
+    label: "Lighting",
+    tools: [
+      { id: "dodge", icon: Sun, label: "Dodge (Lighten)", shortcut: "O" },
+      { id: "burn", icon: Moon, label: "Burn (Darken)", shortcut: "N" },
+    ],
+  },
 ]
 
 const panels: { id: "filters" | "brush" | "transform" | "history"; icon: typeof Sliders; label: string }[] = [

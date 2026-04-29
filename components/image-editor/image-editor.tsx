@@ -328,16 +328,28 @@ export function ImageEditor() {
       ctx.globalAlpha = 0.5 * (opacity / 100)
       ctx.putImageData(blurredData, Math.max(0, x - size / 2), Math.max(0, y - size / 2))
     } else if (tool === "sharpen") {
-      const srcData = ctx.getImageData(
-        Math.max(0, x - size / 2),
-        Math.max(0, y - size / 2),
-        size,
-        size
-      )
+      const canvas = canvasRef.current!
+      const startX = Math.max(0, Math.floor(x - size / 2))
+      const startY = Math.max(0, Math.floor(y - size / 2))
+      const endX = Math.min(canvas.width, Math.floor(x + size / 2))
+      const endY = Math.min(canvas.height, Math.floor(y + size / 2))
+      const regionWidth = endX - startX
+      const regionHeight = endY - startY
       
+      if (regionWidth <= 2 || regionHeight <= 2) return
+      
+      const srcData = ctx.getImageData(startX, startY, regionWidth, regionHeight)
       const sharpenedData = applySharpen(srcData)
-      ctx.globalAlpha = 0.5 * (opacity / 100)
-      ctx.putImageData(sharpenedData, Math.max(0, x - size / 2), Math.max(0, y - size / 2))
+      
+      // Blend sharpened data with original using opacity
+      const blendFactor = 0.5 * (opacity / 100)
+      for (let i = 0; i < srcData.data.length; i += 4) {
+        srcData.data[i] = srcData.data[i] + (sharpenedData.data[i] - srcData.data[i]) * blendFactor
+        srcData.data[i + 1] = srcData.data[i + 1] + (sharpenedData.data[i + 1] - srcData.data[i + 1]) * blendFactor
+        srcData.data[i + 2] = srcData.data[i + 2] + (sharpenedData.data[i + 2] - srcData.data[i + 2]) * blendFactor
+      }
+      
+      ctx.putImageData(srcData, startX, startY)
     } else if (tool === "dodge") {
       const srcData = ctx.getImageData(
         Math.max(0, x - size / 2),
